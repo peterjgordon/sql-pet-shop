@@ -8,7 +8,8 @@ The data must be normalised into 3NF.
 You can apply the script using this command:
 
 ```
-mysql -u root -p < pet.sql
+mysql -u root -p < create.sql
+mysql -u root -p < upgrade-v2.sql
 ```
 
 ## Changes from original
