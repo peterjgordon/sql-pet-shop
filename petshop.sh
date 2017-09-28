@@ -88,7 +88,7 @@ case $1 in
 			keeper)
 				echo ": What is the keeper's name?"
 				read keeper_name
-				printf "INSERT INTO keeper(name) VALUES('$keepername');\n" >> changes.sql
+				printf "INSERT INTO keeper(name) VALUES('$keeper_name');\n" >> changes.sql
 				view_table=keeper
 				;;
 			species)
