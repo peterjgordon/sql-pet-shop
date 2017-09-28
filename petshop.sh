@@ -6,6 +6,7 @@ echo
 echo "Pet Shop Management Interface"
 echo "Usage: $0"
 echo "  --view [pet/keeper/pet_keeper/species] : show a table"
+echo "  --query [number] : run the specified query (1-17)"
 echo
 echo "  --add pet     : register a new pet"
 echo "  --add keeper  : register a new keeper"
@@ -35,6 +36,21 @@ case $1 in
 		echo "Showing the $view_table table.";
 		echo
 		# the table is shown at the end, see after the 'case'
+		;;
+	--query)
+		if [ $# -lt 2 ]
+		then
+			echo "Please specify a query to run (1-17)."
+			exit -1
+		fi
+		# Append 0 (e.g. 01) if it hasn't been supplied
+		file=$2
+		if [ -f queries/query0$file.sql ]
+		then
+			file=0$file
+		fi
+		cat queries/query$file.sql >> changes.sql
+		unset view_table
 		;;
 	--add)
 		if [ $# -lt 2 ]
@@ -182,8 +198,13 @@ case $1 in
 esac
 
 # Show table values
-printf "SELECT * FROM $view_table;" >> changes.sql
+if [ $view_table ]
+then
+	printf "SELECT * FROM $view_table;" >> changes.sql
+fi
 
 # Commit changes to database
+echo
 echo "Your changes will now be committed to the database."
+echo
 mysql -uroot -p < changes.sql
