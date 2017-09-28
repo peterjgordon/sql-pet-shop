@@ -101,7 +101,7 @@ case $1 in
 		read pet_name
 		echo ": What is the keeper's name?"
 		read keeper_name
-		printf "INSERT INTO pet_keeper VALUES((SELECT id FROM pet WHERE name = $pet_name), (SELECT id FROM keeper WHERE name = $keeper_name));\n" >> changes.sql
+		printf "INSERT INTO pet_keeper VALUES((SELECT id FROM pet WHERE name = '$pet_name'), (SELECT id FROM keeper WHERE name = '$keeper_name'));\n" >> changes.sql
 		;;
 	--neuter)
 		echo ": What is the pet's name?"
@@ -116,14 +116,14 @@ case $1 in
 				pet_neuter=0
 				;;
 		esac
-		printf "UPDATE pet SET neuter = $pet_neuter WHERE name = $pet_name;\n" >> changes.sql
+		printf "UPDATE pet SET neuter = $pet_neuter WHERE name = '$pet_name';\n" >> changes.sql
 		;;
 	--price)
 		echo ": Whats is the pet's name?"
 		read pet_name
 		echo ": How much is the pet worth?"
 		read pet_price
-		printf "UPDATE pet SET price = $pet_price WHERE name = $pet_name;\n" >> changes.sql
+		printf "UPDATE pet SET price = $pet_price WHERE name = '$pet_name';\n" >> changes.sql
 		;;
 	--death)
 		echo ": What is the pet's name?"
@@ -138,7 +138,7 @@ case $1 in
 		else
 			pet_death="'$pet_death'"
 		fi
-		printf "UPDATE pet SET death = $pet_death WHERE name = $pet_name;\n" >> changes.sql
+		printf "UPDATE pet SET death = $pet_death WHERE name = '$pet_name';\n" >> changes.sql
 		;;
 	*)
 		echo "'$1' is an invalid flag."
