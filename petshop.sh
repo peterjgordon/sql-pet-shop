@@ -5,6 +5,9 @@ then
 echo
 echo "Pet Shop Management Interface"
 echo "Usage: $0"
+echo "  --create  : run this if the database hasn't been created yet"
+echo "  --upgrade : keep existing data from v1 and upgrade to v2"
+echo
 echo "  --view [pet/keeper/pet_keeper/species] : show a table"
 echo "  --query [number] : run the specified query (1-17)"
 echo
@@ -28,6 +31,17 @@ printf "USE petshop;\n" > changes.sql
 view_table=pet
 
 case $1 in
+	--create)
+		echo "The database will be created."
+		echo "WARNING! Existing data will be deleted."
+		cat create.sql >> changes.sql
+		cat upgrade-v2.sql >> changes.sql
+		;;
+	--upgrade)
+		echo "The database will be upgraded from v1 to v2."
+		echo "Existing data will be saved."
+		cat upgrade-v2.sql >> changes.sql
+		;;
 	--view)
 		if [ ! $# -lt 2 ]
 		then
