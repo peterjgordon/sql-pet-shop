@@ -5,6 +5,13 @@ The data must be normalised into 3NF.
 
 ## Usage
 
+The frontend script can be used to perform most actions on the database.
+You can view the usage by typing this command from the console:
+
+```
+./petshop.sh
+```
+
 You can apply the script using this command:
 
 ```
