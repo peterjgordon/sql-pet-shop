@@ -11,6 +11,10 @@ echo "  --add pet     : register a new pet"
 echo "  --add keeper  : register a new keeper"
 echo "  --add species : register a new species"
 echo
+echo "  --del pet     : delete a pet"
+echo "  --del keeper  : delete a keeper"
+echo "  --del species : delete a species"
+echo
 echo "  --keeper : add a keeper to a pet"
 echo "  --neuter : change the neuter status of a pet"
 echo "  --price  : change the value of a pet"
@@ -102,6 +106,16 @@ case $1 in
 				exit -1
 				;;
 		esac
+		;;
+	--del)
+		if [ $# -lt 2 ]
+		then
+			echo "Usage: $0 --del <pet/keeper/species>"
+			exit -1
+		fi
+		echo ": Enter the $2 name."
+		read name
+		printf "DELETE FROM $2 WHERE name = '$name';\n" >> changes.sql
 		;;
 	--keeper)
 		echo ": What is the pet's name?"
