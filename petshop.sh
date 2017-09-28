@@ -115,6 +115,19 @@ case $1 in
 		fi
 		echo ": Enter the $2 name."
 		read name
+		if [ $2 == pet ]
+		then
+			col=PetID
+		fi
+		if [ $2 == keeper ]
+		then
+			col=KeeperID
+		fi
+
+		if [ $col ]
+		then
+			printf "DELETE FROM pet_keeper WHERE $col = (SELECT id FROM $2 WHERE name = '$name');\n" >> changes.sql
+		fi
 		printf "DELETE FROM $2 WHERE name = '$name';\n" >> changes.sql
 		;;
 	--keeper)
