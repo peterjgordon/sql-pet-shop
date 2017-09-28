@@ -5,11 +5,15 @@ then
 echo
 echo "Pet Shop Management Interface"
 echo "Usage: $0"
-echo "  --view        : show the pets table"
+echo "  --view [pet/keeper/pet_keeper/species] : show a table"
 echo
 echo "  --add pet     : register a new pet"
 echo "  --add keeper  : register a new keeper"
 echo "  --add species : register a new species"
+echo
+echo "  --del pet     : delete a pet"
+echo "  --del keeper  : delete a keeper"
+echo "  --del species : delete a species"
 echo
 echo "  --keeper : add a keeper to a pet"
 echo "  --neuter : change the neuter status of a pet"
@@ -20,12 +24,17 @@ exit -1
 fi
 
 printf "USE petshop;\n" > changes.sql
+view_table=pet
 
 case $1 in
 	--view)
-		echo "Showing the pets table.";
+		if [ ! $# -lt 2 ]
+		then
+			view_table=$2
+		fi
+		echo "Showing the $view_table table.";
 		echo
-		# the pets table is always shown anyway, see after the 'case'
+		# the table is shown at the end, see after the 'case'
 		;;
 	--add)
 		if [ $# -lt 2 ]
@@ -83,12 +92,14 @@ case $1 in
 			keeper)
 				echo ": What is the keeper's name?"
 				read keeper_name
-				printf "INSERT INTO keeper(name) VALUES('$keepername');\n" >> changes.sql
+				printf "INSERT INTO keeper(name) VALUES('$keeper_name');\n" >> changes.sql
+				view_table=keeper
 				;;
 			species)
 				echo ": What is the species name?"
 				read species_name
 				printf "INSERT INTO species(name) VALUES('$species_name');\n" >> changes.sql
+				view_table=species
 				;;
 			*)
 				echo "'$2' is an invalid record type."
@@ -96,12 +107,36 @@ case $1 in
 				;;
 		esac
 		;;
+	--del)
+		if [ $# -lt 2 ]
+		then
+			echo "Usage: $0 --del <pet/keeper/species>"
+			exit -1
+		fi
+		echo ": Enter the $2 name."
+		read name
+		if [ $2 == pet ]
+		then
+			col=PetID
+		fi
+		if [ $2 == keeper ]
+		then
+			col=KeeperID
+		fi
+
+		if [ $col ]
+		then
+			printf "DELETE FROM pet_keeper WHERE $col = (SELECT id FROM $2 WHERE name = '$name');\n" >> changes.sql
+		fi
+		printf "DELETE FROM $2 WHERE name = '$name';\n" >> changes.sql
+		;;
 	--keeper)
 		echo ": What is the pet's name?"
 		read pet_name
 		echo ": What is the keeper's name?"
 		read keeper_name
 		printf "INSERT INTO pet_keeper VALUES((SELECT id FROM pet WHERE name = '$pet_name'), (SELECT id FROM keeper WHERE name = '$keeper_name'));\n" >> changes.sql
+		view_table=pet_keeper
 		;;
 	--neuter)
 		echo ": What is the pet's name?"
@@ -147,7 +182,7 @@ case $1 in
 esac
 
 # Show table values
-printf "SELECT * FROM pet;" >> changes.sql
+printf "SELECT * FROM $view_table;" >> changes.sql
 
 # Commit changes to database
 echo "Your changes will now be committed to the database."
